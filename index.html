@@ -1,0 +1,42 @@
+<script>
+    // 색상 적용 함수
+    function colorizeNotionCalendarEvents() {
+        // 모든 이벤트 링크를 찾음
+        const eventLinks = document.querySelectorAll('a[role="link"]');
+
+        eventLinks.forEach(link => {
+            // 이미 스타일이 적용된 링크는 건너뜀
+            if (link.dataset.styled === 'true') return;
+
+            // 태그가 있는지 확인
+            const tagWithColor = link.querySelector('div[style*="background"] span');
+            if (!tagWithColor) return;
+
+            const tagWrapper = tagWithColor.closest('div[style*="background"]');
+            if (!tagWrapper) return;
+
+            // 배경색 추출
+            const bgColor = window.getComputedStyle(tagWrapper).backgroundColor;
+            if (!bgColor) return;
+
+            // 배경색 적용
+            link.style.setProperty('background-color', bgColor, 'important');
+            link.dataset.styled = 'true';  // 이미 스타일이 적용되었음을 표시
+        });
+    }
+
+    // 페이지가 로드될 때 색상 적용
+    window.addEventListener('load', () => {
+        colorizeNotionCalendarEvents();
+    });
+
+    // DOM 변경을 감지해서 자동으로 색상 변경 (새로운 이벤트 추가시)
+    const observer = new MutationObserver(() => {
+        colorizeNotionCalendarEvents();
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+</script>
